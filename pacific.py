@@ -1,3 +1,4 @@
+import csv
 import os
 
 from dotenv import find_dotenv, load_dotenv
@@ -23,6 +24,13 @@ import models
 db.create_all()
 
 
+def parse_upload(path):
+    with open(path, 'r') as f:
+        reader = csv.reader(f, delimiter='\t')
+    db.session.add(models.Input(name_first="alice", name_last="bob"))
+    db.session.commit() 
+
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -43,10 +51,10 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            parse_upload(filepath)
             flash('uploaded file')
-            db.session.add(models.Input(name_first="alice", name_last="bob"))
-            db.session.commit()
             return redirect(url_for('upload_file'))
     return render_template('index.html')
     
