@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style type="text/css">
+        #flashes {
+            color: pink;
+            background-color: purple;
+        }
+    </style>
+</head>
+<body>
+    <div id="flashes">
+        {% with msgs = get_flashed_messages() %}
+            {% if msgs %}
+                {% for msg in msgs %}
+                <div>{{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file>
+      <input type=submit value=Upload>
+    </form>
+</body>
+</html>
+

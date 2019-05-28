@@ -1,8 +1,11 @@
 import os
-from flask import Flask, flash, request, redirect, url_for, send_from_directory
+from dotenv import find_dotenv, load_dotenv
+from flask import Flask, flash, request, redirect, url_for, send_from_directory, render_template
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+load_dotenv(find_dotenv())
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY").encode()
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['UPLOAD_FOLDER'] = os.path.join(basedir, 'uploads')
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
@@ -29,17 +32,9 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file',
-                                    filename=filename))
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
-    '''
+            flash('uploaded file')
+            return redirect(url_for('upload_file'))
+    return render_template('index.html')
     
 
 @app.route('/uploads/<filename>')
