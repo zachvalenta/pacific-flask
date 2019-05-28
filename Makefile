@@ -18,6 +18,9 @@ help:
 run:
 	source venv/bin/activate; export FLASK_APP=pacific; export FLASK_ENV=development; flask run
 
+drop:
+	qing local.db; touch local.db
+
 fmt:
 	black src test
 
