@@ -6,3 +6,6 @@
 
 # virtualenv
 venv
+
+# file uploads
+uploads
