@@ -15,7 +15,7 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY").encode()
 # uploads
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['UPLOAD_FOLDER'] = os.path.join(basedir, 'uploads')
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(['txt', 'csv'])
 
 # db
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(basedir, 'local.db')
@@ -26,9 +26,21 @@ db.create_all()
 
 def parse_upload(path):
     with open(path, 'r') as f:
-        reader = csv.reader(f, delimiter='\t')
-    db.session.add(models.Input(name_first="alice", name_last="bob"))
-    db.session.commit() 
+        data = list(csv.reader(f, delimiter='\t'))
+        for row in data:
+            record = models.Input(
+                name_first=row[1],
+                name_last=row[2],
+                address=row[3],
+                state=row[4],
+                zip=row[5],
+                status=row[6],
+                product_id=row[7],
+                product_name=row[8],
+                product_amount=row[9],
+            )
+            db.session.add(record)
+            db.session.commit() 
 
 
 def allowed_file(filename):
